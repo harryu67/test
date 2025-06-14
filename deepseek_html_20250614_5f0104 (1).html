@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ගුණන වගු පුහුණු</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #b2ebf2);
+      margin: 0;
+      padding: 15px;
+      text-align: center;
+      min-height: 100vh;
+    }
+    
+    .game-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #00796b;
+      background: linear-gradient(to right, #80deea, #b2ebf2);
+      padding: 15px;
+      border-radius: 15px;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      text-shadow: 1px 1px 2px rgba(255,255,255,0.7);
+      border: 2px solid #4dd0e1;
+    }
+    
+    .table-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .table-btn {
+      background: #ff9e00;
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 0 #cc7e00;
+    }
+    
+    .table-btn:hover {
+      background: #ffb74d;
+      transform: translateY(-3px);
+      box-shadow: 0 7px 0 #cc7e00;
+    }
+    
+    .table-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #cc7e00;
+    }
+    
+    #mixed-tables-btn {
+      grid-column: span 3;
+      background: linear-gradient(to bottom, #ff7043, #f4511e);
+      box-shadow: 0 4px 0 #bf360c;
+      border: 1px solid #ff8a65;
+    }
+    
+    #mixed-tables-btn:hover {
+      box-shadow: 0 6px 0 #bf360c;
+      background: linear-gradient(to bottom, #ff8a65, #ff5722);
+    }
+    
+    #mixed-tables-btn:active {
+      box-shadow: 0 2px 0 #bf360c;
+    }
+    
+    .quiz-container {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 0 auto 20px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+      display: none;
+      border: 3px solid #4dd0e1;
+      background: linear-gradient(to bottom, #e8f5e9, #c8e6c9);
+    }
+    
+    .question {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      color: #2e7d32;
+      background: linear-gradient(to right, #a5d6a7, #81c784);
+      padding: 15px;
+      border-radius: 12px;
+      font-weight: bold;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      border: 1px solid #66bb6a;
+    }
+    
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .option {
+      background: linear-gradient(to bottom, #e3f2fd, #bbdefb);
+      padding: 20px;
+      border-radius: 12px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 3px 0 #90caf9;
+      border: 2px solid #90caf9;
+    }
+    
+    .option:hover {
+      background: linear-gradient(to bottom, #bbdefb, #90caf9);
+      transform: scale(1.05);
+    }
+    
+    .feedback {
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 12px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      display: none;
+      animation: bounce 0.5s;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(-20px);}
+      60% {transform: translateY(-10px);}
+    }
+    
+    .correct {
+      background: linear-gradient(to right, #c8e6c9, #a5d6a7);
+      color: #1b5e20;
+      border: 2px solid #81c784;
+    }
+    
+    .incorrect {
+      background: linear-gradient(to right, #ffebee, #ffcdd2);
+      color: #c62828;
+      border: 2px solid #ef9a9a;
+    }
+    
+    .progress-container {
+      width: 100%;
+      height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      margin: 15px 0;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+    }
+    
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #4caf50, #2e7d32);
+      border-radius: 10px;
+      transition: width 0.5s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    #result {
+      display: none;
+      background: linear-gradient(to bottom, #fff9c4, #fff59d);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+      border: 3px dashed #ffd54f;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+    
+    .stars {
+      font-size: 2.5rem;
+      margin: 10px 0;
+      color: #ffc107;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    #restart-btn {
+      background: linear-gradient(to bottom, #ff7043, #f4511e);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 0 #bf360c;
+      border: 1px solid #ff8a65;
+    }
+    
+    #restart-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 0 #bf360c;
+      background: linear-gradient(to bottom, #ff8a65, #ff5722);
+    }
+    
+    .celebration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      display: none;
+    }
+    
+    /* නව footer ස්ටයිල් */
+    .app-footer {
+      margin-top: 30px;
+      padding: 15px;
+      font-size: 14px;
+      color: #555;
+      text-align: center;
+      border-top: 1px solid #e0e0e0;
+      background: linear-gradient(to bottom, #e0f7fa, #b2ebf2);
+      border-radius: 0 0 15px 15px;
+    }
+    
+    #footer-text {
+      font-weight: bold;
+      color: #00796b;
+    }
+    
+    .whatsapp-link {
+      color: #25D366;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    @media (max-width: 600px) {
+      .options {
+        grid-template-columns: 1fr;
+      }
+      
+      .table-buttons {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      #mixed-tables-btn {
+        grid-column: span 2;
+      }
+      
+      /* ජංගම උපාංග සඳහා footer සුවිශේෂී සැකසුම් */
+      .app-footer {
+        font-size: 12px;
+        padding: 10px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 0;
+      }
+      
+      body {
+        margin-bottom: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>✏️ ගුණන වගු පුහුණු ✏️</h1>
+    
+    <div class="table-buttons" id="table-buttons">
+      <!-- Buttons will be added by JavaScript -->
+    </div>
+    <button id="mixed-tables-btn" class="table-btn">🎲 මිශ්‍ර වගු 🎲</button>
+    
+    <div class="quiz-container" id="quiz-container">
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="progress-container">
+        <div id="progress-bar"></div>
+      </div>
+    </div>
+    
+    <div id="result">
+      <h2 style="color: #00796b; text-shadow: 1px 1px 2px rgba(255,255,255,0.7);">🏆 ඔබේ ප්‍රතිඵලය 🏆</h2>
+      <div class="stars" id="stars"></div>
+      <p id="score-text" style="font-size: 1.2rem; color: #2e7d32;"></p>
+      <p id="message" style="font-size: 1.1rem; color: #00796b; font-weight: bold;"></p>
+      <button id="restart-btn">🔄 නැවත උත්සාහ කරන්න</button>
+    </div>
+  </div>
+  
+  <div class="celebration" id="celebration"></div>
+  
+  <div class="app-footer">
+    <div id="footer-text">
+      Dil Online Maths : 
+      <a href="https://wa.me/94765698704" target="_blank" class="whatsapp-link">WhatsApp 076-5698704</a>
+    </div>
+  </div>
+  
+  <script>
+    // Game configuration
+    const config = {
+      totalQuestions: 12,
+      pointsPerCorrect: 10,
+      tables: 12
+    };
+    
+    // Game state
+    let state = {
+      currentTable: 1,
+      currentQuestion: 0,
+      score: 0,
+      questions: [],
+      fillQuestions: [],
+      isMixed: false,
+      currentRound: "multiplication"
+    };
+    
+    // DOM elements
+    const elements = {
+      tableButtons: document.getElementById('table-buttons'),
+      mixedTablesBtn: document.getElementById('mixed-tables-btn'),
+      quizContainer: document.getElementById('quiz-container'),
+      question: document.getElementById('question'),
+      options: document.getElementById('options'),
+      feedback: document.getElementById('feedback'),
+      progressBar: document.getElementById('progress-bar'),
+      result: document.getElementById('result'),
+      stars: document.getElementById('stars'),
+      scoreText: document.getElementById('score-text'),
+      message: document.getElementById('message'),
+      restartBtn: document.getElementById('restart-btn'),
+      celebration: document.getElementById('celebration')
+    };
+    
+    // Initialize the game
+    function init() {
+      // Create table buttons
+      for (let i = 1; i <= config.tables; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'table-btn';
+        btn.textContent = `${i} වගුව`;
+        btn.onclick = () => startGame(i, false);
+        elements.tableButtons.appendChild(btn);
+      }
+      
+      // Mixed tables button
+      elements.mixedTablesBtn.onclick = () => startGame(0, true);
+      
+      // Restart button
+      elements.restartBtn.onclick = () => {
+        elements.result.style.display = 'none';
+        elements.tableButtons.style.display = 'grid';
+        elements.mixedTablesBtn.style.display = 'block';
+      };
+    }
+    
+    // Start the game
+    function startGame(table, isMixed) {
+      state.currentTable = table;
+      state.currentQuestion = 0;
+      state.score = 0;
+      state.isMixed = isMixed;
+      state.currentRound = "multiplication";
+      
+      // Generate questions
+      state.questions = isMixed ? generateMixedQuestions() : generateCompleteTableQuestions(table);
+      state.fillQuestions = isMixed ? generateMixedFillQuestions() : generateFillQuestions(table);
+      
+      // Hide table buttons and show quiz
+      elements.tableButtons.style.display = 'none';
+      elements.mixedTablesBtn.style.display = 'none';
+      elements.quizContainer.style.display = 'block';
+      elements.result.style.display = 'none';
+      
+      // Show first question
+      showQuestion();
+    }
+    
+    // Generate complete table questions (1-12)
+    function generateCompleteTableQuestions(table) {
+      const questions = [];
+      for (let i = 1; i <= 12; i++) {
+        questions.push({
+          type: 'multiplication',
+          num1: table,
+          num2: i,
+          correctAnswer: table * i
+        });
+      }
+      return shuffleArray(questions);
+    }
+    
+    // Generate fill in the blank questions
+    function generateFillQuestions(table) {
+      const questions = [];
+      for (let i = 1; i <= 12; i++) {
+        questions.push({
+          type: 'fillBlank',
+          num1: table,
+          missing: i,
+          product: table * i
+        });
+      }
+      return shuffleArray(questions);
+    }
+    
+    // Generate mixed multiplication questions
+    function generateMixedQuestions() {
+      const questions = [];
+      for (let table = 1; table <= 12; table++) {
+        for (let i = 1; i <= 12; i++) {
+          questions.push({
+            type: 'multiplication',
+            num1: table,
+            num2: i,
+            correctAnswer: table * i
+          });
+        }
+      }
+      return shuffleArray(questions).slice(0, config.totalQuestions);
+    }
+    
+    // Generate mixed fill in the blank questions
+    function generateMixedFillQuestions() {
+      const questions = [];
+      for (let table = 1; table <= 12; table++) {
+        for (let i = 1; i <= 12; i++) {
+          questions.push({
+            type: 'fillBlank',
+            num1: table,
+            missing: i,
+            product: table * i
+          });
+        }
+      }
+      return shuffleArray(questions).slice(0, config.totalQuestions);
+    }
+    
+    // Show current question
+    function showQuestion() {
+      let question;
+      
+      if (state.currentRound === "multiplication") {
+        if (state.currentQuestion >= state.questions.length) {
+          state.currentRound = "fillBlank";
+          state.currentQuestion = 0;
+          showQuestion();
+          return;
+        }
+        question = state.questions[state.currentQuestion];
+        elements.question.textContent = `${state.currentQuestion + 1}. ${question.num1} × ${question.num2} = ?`;
+      } else {
+        if (state.currentQuestion >= state.fillQuestions.length) {
+          endGame();
+          return;
+        }
+        question = state.fillQuestions[state.currentQuestion];
+        elements.question.textContent = `${state.currentQuestion + 1}. ${question.num1} × ___ = ${question.product}`;
+      }
+      
+      const options = state.currentRound === "multiplication" 
+        ? generateOptions(question.correctAnswer) 
+        : generateOptions(question.missing);
+      
+      elements.options.innerHTML = '';
+      
+      options.forEach(option => {
+        const optionEl = document.createElement('div');
+        optionEl.className = 'option';
+        optionEl.textContent = option;
+        optionEl.onclick = () => checkAnswer(option, question);
+        elements.options.appendChild(optionEl);
+      });
+      
+      const totalQuestions = config.totalQuestions * 2;
+      const completedQuestions = state.currentRound === "multiplication" 
+        ? state.currentQuestion 
+        : config.totalQuestions + state.currentQuestion;
+      elements.progressBar.style.width = `${(completedQuestions / totalQuestions) * 100}%`;
+      
+      elements.feedback.style.display = 'none';
+    }
+    
+    // Generate multiple choice options
+    function generateOptions(correctAnswer) {
+      const options = new Set([correctAnswer]);
+      
+      while (options.size < 4) {
+        const variation = Math.random() > 0.5 ? 
+          Math.floor(Math.random() * 5) + 1 : 
+          -(Math.floor(Math.random() * 5) + 1);
+        const wrongAnswer = correctAnswer + variation;
+        
+        if (wrongAnswer > 0 && !options.has(wrongAnswer)) {
+          options.add(wrongAnswer);
+        }
+      }
+      
+      return shuffleArray(Array.from(options));
+    }
+    
+    // Check the selected answer
+    function checkAnswer(selectedAnswer, question) {
+      let isCorrect;
+      let correctAnswer;
+      
+      if (state.currentRound === "multiplication") {
+        isCorrect = selectedAnswer == question.correctAnswer;
+        correctAnswer = question.correctAnswer;
+      } else {
+        isCorrect = selectedAnswer == question.missing;
+        correctAnswer = question.missing;
+      }
+      
+      elements.feedback.textContent = isCorrect 
+        ? '👍 හරි! නිවැරදි පිළිතුර' 
+        : `👎 වැරදියි! නිවැරදි පිළිතුර: ${correctAnswer}`;
+      
+      elements.feedback.className = isCorrect ? 'feedback correct' : 'feedback incorrect';
+      elements.feedback.style.display = 'block';
+      
+      if (isCorrect) {
+        state.score += config.pointsPerCorrect;
+        celebrate();
+      }
+      
+      const optionElements = document.querySelectorAll('.option');
+      optionElements.forEach(opt => {
+        opt.style.pointerEvents = 'none';
+        if (opt.textContent == correctAnswer) {
+          opt.style.background = '#c8e6c9';
+          opt.style.background = 'linear-gradient(to bottom, #a5d6a7, #81c784)';
+        }
+      });
+      
+      setTimeout(() => {
+        state.currentQuestion++;
+        showQuestion();
+      }, 2000);
+    }
+    
+    // Celebration effect
+    function celebrate() {
+      elements.celebration.style.display = 'block';
+      elements.celebration.innerHTML = '';
+      
+      for (let i = 0; i < 20; i++) {
+        const confetti = document.createElement('div');
+        confetti.innerHTML = ['🎉', '🎊', '✨', '🌟', '💫'][Math.floor(Math.random() * 5)];
+        confetti.style.position = 'absolute';
+        confetti.style.fontSize = `${Math.random() * 20 + 10}px`;
+        confetti.style.left = `${Math.random() * 100}%`;
+        confetti.style.top = `${Math.random() * 100}%`;
+        confetti.style.animation = `fall ${Math.random() * 3 + 2}s linear forwards`;
+        
+        const keyframes = `
+          @keyframes fall {
+            to {
+              transform: translateY(100vh) rotate(${Math.random() * 360}deg);
+            }
+          }
+        `;
+        
+        const style = document.createElement('style');
+        style.innerHTML = keyframes;
+        elements.celebration.appendChild(style);
+        elements.celebration.appendChild(confetti);
+      }
+      
+      setTimeout(() => {
+        elements.celebration.style.display = 'none';
+      }, 2000);
+    }
+    
+    // End the game and show results
+    function endGame() {
+      elements.quizContainer.style.display = 'none';
+      
+      const totalPossibleScore = config.totalQuestions * config.pointsPerCorrect * 2;
+      const percentage = (state.score / totalPossibleScore) * 100;
+      let message = '';
+      let stars = '';
+      
+      if (percentage >= 90) {
+        message = 'ප්‍රශංසනීය! ඔබ ගුණන වගු විශේෂඥයෙක්! 🏆';
+        stars = '⭐⭐⭐⭐⭐';
+      } else if (percentage >= 70) {
+        message = 'හොඳයි! තව ටිකක් පුහුණු වෙන්න! ✨';
+        stars = '⭐⭐⭐';
+      } else {
+        message = 'උත්සහ කරන්න! ඔබට තවත් වැඩිදියුණු කළ හැකිය! 💪';
+        stars = '⭐⭐';
+      }
+      
+      elements.stars.innerHTML = stars;
+      elements.scoreText.textContent = `ලකුණු: ${state.score}/${totalPossibleScore}`;
+      elements.message.textContent = message;
+      elements.result.style.display = 'block';
+      
+      if (percentage === 100) {
+        for (let i = 0; i < 5; i++) {
+          setTimeout(celebrate, i * 300);
+        }
+      }
+    }
+    
+    // Utility function to shuffle array
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+    
+    // Initialize the game when page loads
+    window.onload = init;
+  </script>
+</body>
+</html>
